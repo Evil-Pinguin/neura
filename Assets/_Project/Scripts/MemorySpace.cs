@@ -4,8 +4,13 @@ using UnityEngine;
 // Планировка (локальные координаты от origin, смотрим на +Z):
 //   прихожая (z 0..4) -> зелёный коридор (z 4..16) -> детская (z 16..22).
 // В детской: рисунок на стене (MemoryEcho) и светящийся выход (MemoryExit).
+// Локацию можно запечь в сцену: меню NeuralCanvas -> Bake Memory Space into Scene.
+// ВАЖНО: подписки на Interactable живут в Awake самих компонентов,
+// а не здесь, — иначе в запечённой сцене они потеряются.
 public static class MemorySpace
 {
+    public static readonly Vector3 DefaultOrigin = new Vector3(500f, 0f, 500f);
+
     public static void Build(Vector3 o, out Vector3 spawnPos, out float spawnYaw)
     {
         var root = new GameObject("MemorySpace");
@@ -61,9 +66,7 @@ public static class MemorySpace
         echo.transform.localRotation = Quaternion.Euler(0f, 0f, 4f);
         var echoInter = echo.AddComponent<Interactable>();
         echoInter.prompt = "Рассмотреть рисунок [E]";
-        var echoComp = echo.AddComponent<MemoryEcho>();
-        echoComp.echoId = "memory_no_people";
-        echoInter.onInteract.AddListener(echoComp.Inspect);
+        echo.AddComponent<MemoryEcho>().echoId = "memory_no_people";
 
         // ---------- выход в восточной стене ----------
         Box(root, "ExitFrame_L", new Vector3(3.05f, 1.5f, 18.2f), new Vector3(0.24f, 2.6f, 0.24f), darkMat);
@@ -73,8 +76,7 @@ public static class MemorySpace
             new Vector3(3.1f, 1.5f, 19f), new Vector3(0.1f, 2.2f, 1.4f), glowMat);
         var exitInter = exit.AddComponent<Interactable>();
         exitInter.prompt = "Выйти из воспоминания [E]";
-        var exitComp = exit.AddComponent<MemoryExit>();
-        exitInter.onInteract.AddListener(exitComp.Exit);
+        exit.AddComponent<MemoryExit>();
 
         // ---------- свет ----------
         Lamp(root, "LampA", new Vector3(0f, 2.4f, 2f), new Color(0.60f, 0.75f, 0.90f), 0.6f, 7f);
@@ -82,8 +84,12 @@ public static class MemorySpace
         Lamp(root, "LampB", new Vector3(0f, 2.4f, 19f), new Color(1.0f, 0.80f, 0.60f), 0.8f, 10f);
         Lamp(root, "LampExit", new Vector3(2.4f, 2.0f, 19f), new Color(0.30f, 0.85f, 1.0f), 1.2f, 7f);
 
-        spawnPos = o + new Vector3(0f, 1.1f, 1.2f);
-        spawnYaw = 0f; // смотрим вглубь, на коридор
+        // ---------- маркер спавна (едет вместе с корнем, если двигать руками) ----------
+        var marker = new GameObject("MemorySpawn");
+        marker.transform.SetParent(root.transform, false);
+        marker.transform.localPosition = new Vector3(0f, 1.1f, 1.2f);
+        spawnPos = marker.transform.position;
+        spawnYaw = marker.transform.eulerAngles.y;
     }
 
     static GameObject Box(GameObject root, string name, Vector3 pos, Vector3 size, Material mat)

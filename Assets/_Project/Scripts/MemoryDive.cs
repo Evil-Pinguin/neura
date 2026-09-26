@@ -6,6 +6,7 @@ using UnityEngine;
 // в пространство памяти (строит MemorySpace), переключает мир на Memory.
 // Выход — через MemoryExit в дальней комнате.
 // Условие: аномалия Уилла зафиксирована (GameFlags.AnomalySeen).
+// Если локация запечена в сцену (меню NeuralCanvas -> Bake), используется она.
 public class MemoryDive : MonoBehaviour
 {
     public static MemoryDive Instance { get; private set; }
@@ -13,7 +14,7 @@ public class MemoryDive : MonoBehaviour
 
     [Header("Настройки")]
     [SerializeField] string stationName = "RestoreStation";
-    [SerializeField] Vector3 memoryOrigin = new Vector3(500f, 0f, 500f);
+    [SerializeField] Vector3 memoryOrigin = MemorySpace.DefaultOrigin;
     [SerializeField] float fadeTime = 0.6f;
 
     PlayerController playerController;
@@ -108,7 +109,8 @@ public class MemoryDive : MonoBehaviour
         transitioning = true;
         if (!spaceBuilt)
         {
-            MemorySpace.Build(memoryOrigin, out spawnPos, out spawnYaw);
+            if (!TryUseBakedSpace(out spawnPos, out spawnYaw))
+                MemorySpace.Build(memoryOrigin, out spawnPos, out spawnYaw);
             spaceBuilt = true;
         }
 
@@ -164,6 +166,32 @@ public class MemoryDive : MonoBehaviour
         if (playerController != null) playerController.enabled = true;
         if (playerInteraction != null) playerInteraction.enabled = true;
         transitioning = false;
+    }
+
+    // сцена уже содержит запечённую локацию — строить ничего не надо,
+    // спавн берём с маркера (он дитя корня и едет вместе с ним)
+    bool TryUseBakedSpace(out Vector3 spawn, out float yaw)
+    {
+        var root = GameObject.Find("MemorySpace");
+        if (root == null)
+        {
+            spawn = memoryOrigin + new Vector3(0f, 1.1f, 1.2f);
+            yaw = 0f;
+            return false;
+        }
+        var marker = GameObject.Find("MemorySpawn");
+        if (marker != null)
+        {
+            spawn = marker.transform.position;
+            yaw = marker.transform.eulerAngles.y;
+        }
+        else
+        {
+            spawn = root.transform.position + new Vector3(0f, 1.1f, 1.2f);
+            yaw = root.transform.eulerAngles.y;
+        }
+        Debug.Log("[Dive] использую запечённую локацию из сцены.");
+        return true;
     }
 
     void Teleport(Vector3 pos, float yaw)
