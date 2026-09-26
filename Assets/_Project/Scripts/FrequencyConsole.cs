@@ -130,6 +130,8 @@ public class FrequencyConsole : MonoBehaviour
         if (AnomalyActive)
         {
             GameFlags.AnomalySeen = true; // ← теперь Ким знает, что обсуждать
+            JournalSystem.Unlock("will_anomaly");
+            JournalSystem.Unlock("archivist_syndrome");
 
             echoTimer = 1.0f;
             glitchTimer = GameFlags.CalibrationRefused ? 2.2f : 1.4f;
@@ -141,6 +143,7 @@ public class FrequencyConsole : MonoBehaviour
         }
         else
         {
+            JournalSystem.Unlock("freq_clean");
             string note = willCase ? " Аномалий не обнаружено. Файл закрыт." : " — файл пациента обновлён.";
             Debug.Log("ЧАСТОТА ЗАХВАЧЕНА: " + targetFreq.ToString("0.00") + " Hz" + note);
             StartCoroutine(CloseAfter(2f, false));

@@ -28,6 +28,7 @@ public class CoffeeMachine : MonoBehaviour
         yield return new WaitForSeconds(0.35f);  // ...и кофе пошёл мимо кружки
         shake.Shake(0.15f);
         stain.SetActive(true);
+        JournalSystem.Unlock("coffee_spill");
         Debug.Log("Рука дрогнула. Кофе пролился.");
     }
 
@@ -35,6 +36,7 @@ public class CoffeeMachine : MonoBehaviour
     {
         stain.SetActive(false);
         GameFlags.StainErased = true;
+        JournalSystem.Unlock("stain_erased");
         Debug.Log("Пятно исчезло. Как будто его и не было.");
     }
 }

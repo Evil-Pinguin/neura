@@ -7,7 +7,8 @@ public class CrosshairHider : MonoBehaviour
         bool anyUI =
             (DialogRunner.Instance != null && DialogRunner.Instance.Active) ||
             (FrequencyConsole.Instance != null && FrequencyConsole.Instance.IsOpen) ||
-            (InventorySystem.Instance != null && InventorySystem.Instance.IsOpenPublic);
+            (InventorySystem.Instance != null && InventorySystem.Instance.IsOpenPublic) ||
+            (JournalSystem.Instance != null && JournalSystem.Instance.IsOpen);
 
         gameObject.SetActive(!anyUI);
     }

@@ -63,7 +63,13 @@ public class InventorySystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (open) Close();
-            else TryOpen();
+            else
+            {
+                // переключаемся с дневника без конфликта клавиш
+                if (JournalSystem.Instance != null && JournalSystem.Instance.IsOpen)
+                    JournalSystem.Instance.ClosePublic();
+                TryOpen();
+            }
             return;
         }
 
@@ -115,9 +121,10 @@ public class InventorySystem : MonoBehaviour
 
     void TryOpen()
     {
-        // не открываемся поверх диалога и консоли
+        // не открываемся поверх диалога, консоли и дневника
         if (DialogRunner.Instance != null && DialogRunner.Instance.Active) return;
         if (FrequencyConsole.Instance != null && FrequencyConsole.Instance.IsOpen) return;
+        if (JournalSystem.Instance != null && JournalSystem.Instance.IsOpen) return;
 
         open = true;
         panel.SetActive(true);
@@ -138,6 +145,9 @@ public class InventorySystem : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+
+    public void OpenPublic() { TryOpen(); }
+    public void ClosePublic() { if (open) Close(); }
 
     void ApplySkin()
     {

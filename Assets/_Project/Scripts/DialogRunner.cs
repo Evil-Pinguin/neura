@@ -170,12 +170,14 @@ public class DialogRunner : MonoBehaviour
         {
             case ChoiceEffect.AcceptCalibration:
                 GameFlags.CalibrationAccepted = true;
+                JournalSystem.Unlock("calibration_yes");
                 StartCoroutine(CalibrationCalm());
                 Debug.Log("ВЫБОР: калибровка принята. Симптомы подавлены на 90 секунд.");
                 break;
 
             case ChoiceEffect.RefuseCalibration:
                 GameFlags.CalibrationRefused = true;
+                JournalSystem.Unlock("calibration_no");
                 shake.Nausea(0.7f); // тело отвечает сразу
                 Debug.Log("ВЫБОР: отказ. Файл Уилла остаётся открытым. Аномалия усиливается.");
                 break;
