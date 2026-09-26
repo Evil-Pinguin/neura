@@ -126,6 +126,8 @@ public class FrequencyConsole : MonoBehaviour
     void Capture()
     {
         Captured = true;
+        GameFlags.FreqDone = true;
+        OfficeAccess.TryUnlock();
 
         if (AnomalyActive)
         {

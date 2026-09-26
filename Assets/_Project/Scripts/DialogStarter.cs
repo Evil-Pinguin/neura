@@ -7,6 +7,7 @@ public class DialogStarter : MonoBehaviour
     [SerializeField] DialogAsset anomalyDialog; // приоритетный: аномалия видена, решения ещё нет
 
     [SerializeField] bool talkedOnce;
+    [SerializeField] bool setsTalkedKim; // true только у Ким — идёт в зачёт кабинета
 
     public void StartDialog()
     {
@@ -25,6 +26,11 @@ public class DialogStarter : MonoBehaviour
             dialog = firstDialog;
 
         talkedOnce = true;
+        if (setsTalkedKim && !GameFlags.TalkedKim)
+        {
+            GameFlags.TalkedKim = true;
+            OfficeAccess.TryUnlock();
+        }
         DialogRunner.Instance.Open(dialog);
     }
 }

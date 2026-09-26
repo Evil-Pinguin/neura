@@ -19,6 +19,8 @@ public class CoffeeMachine : MonoBehaviour
         }
 
         firstBrewHappened = true;
+        GameFlags.CoffeeDone = true;
+        OfficeAccess.TryUnlock();
         StartCoroutine(SpillSequence());
     }
 
