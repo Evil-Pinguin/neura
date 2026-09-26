@@ -102,6 +102,11 @@ public class JournalSystem : MonoBehaviour
         if (Instance != null) Instance.UnlockInternal(id, true);
     }
 
+    public static void Notify(string text)
+    {
+        if (Instance != null) Instance.EnqueueToast(text);
+    }
+
     public static bool Has(string id)
     {
         return !string.IsNullOrEmpty(id) && unlockedIds.Contains(id);
