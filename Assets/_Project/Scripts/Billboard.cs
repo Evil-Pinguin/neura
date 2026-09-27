@@ -13,6 +13,7 @@ public class Billboard : MonoBehaviour
     void LateUpdate()
     {
         if (cam == null) cam = Camera.main;
+        if (cam == null) cam = FindObjectOfType<Camera>(); // страховка: вдруг нет тега MainCamera
         if (cam == null) return;
 
         Vector3 d = cam.transform.position - transform.position;

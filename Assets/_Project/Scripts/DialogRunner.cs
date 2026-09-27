@@ -61,6 +61,8 @@ public class DialogRunner : MonoBehaviour
         active = false;
         panel.SetActive(false);
         HideChoices();
+        DialogPortrait.Instance?.Hide();
+        StandeeEmotion.Instance?.OnDialogClosed();
         playerController.enabled = true;
         playerInteraction.enabled = true;
         Cursor.lockState = CursorLockMode.Locked;

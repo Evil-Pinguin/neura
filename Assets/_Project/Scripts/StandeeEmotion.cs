@@ -32,9 +32,33 @@ public class StandeeEmotion : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        EnsureQuadMesh(); // вместо тонкого куба — плоский квад: иначе видны грани/зеркальная спина
         mat = GetComponent<MeshRenderer>().material; // инстанс — общий ассет не трогаем
         SetEmotion(defaultEmotion);
         blinkTimer = Random.Range(blinkInterval.x, blinkInterval.y);
+    }
+
+    // Односторонний квад 1x1 строго анфас (+z). Не зависим от меша в сцене.
+    void EnsureQuadMesh()
+    {
+        var mf = GetComponent<MeshFilter>();
+        if (mf == null) return;
+        var mesh = new Mesh { name = "StandeeQuad" };
+        mesh.vertices = new Vector3[]
+        {
+            new Vector3(-0.5f, -0.5f, 0f),
+            new Vector3(0.5f, -0.5f, 0f),
+            new Vector3(-0.5f, 0.5f, 0f),
+            new Vector3(0.5f, 0.5f, 0f),
+        };
+        mesh.uv = new Vector2[]
+        {
+            new Vector2(0f, 0f), new Vector2(1f, 0f),
+            new Vector2(0f, 1f), new Vector2(1f, 1f),
+        };
+        mesh.triangles = new int[] { 0, 1, 2, 2, 1, 3 };
+        mesh.normals = new Vector3[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
+        mf.mesh = mesh;
     }
 
     void Update()
