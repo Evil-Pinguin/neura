@@ -28,6 +28,7 @@ public static class Syndrome
         DejaVuPending = true;
         if (Stage >= 3) WorriedPending = true;
         Debug.Log("Синдром архивариуса: стадия " + Stage);
+        if (Stage >= 4) CutsceneDirector.Queue("critical");
     }
 
     public static void Reset()

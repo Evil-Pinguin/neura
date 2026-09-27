@@ -186,6 +186,7 @@ public class DialogRunner : MonoBehaviour
             case ChoiceEffect.RefuseCalibration:
                 GameFlags.CalibrationRefused = true;
                 JournalSystem.Unlock("calibration_no");
+                CutsceneDirector.Queue("refusal");
                 shake.Nausea(0.7f); // тело отвечает сразу
                 Debug.Log("ВЫБОР: отказ. Файл Уилла остаётся открытым. Аномалия усиливается.");
                 break;

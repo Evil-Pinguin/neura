@@ -140,8 +140,30 @@ public class SyndromeVoice : MonoBehaviour
         rt.offsetMin = Vector2.zero;
         rt.offsetMax = Vector2.zero;
         bleedImage = go.AddComponent<UnityEngine.UI.Image>();
+        bleedImage.sprite = VignetteSprite();
         bleedImage.color = new Color(0.45f, 0.02f, 0.03f, 0f);
         bleedImage.raycastTarget = false;
         go.SetActive(false);
+    }
+
+    // Радиальная виньетка: прозрачный центр, плотные края.
+    static UnityEngine.Sprite vignette;
+    static UnityEngine.Sprite VignetteSprite()
+    {
+        if (vignette != null) return vignette;
+        int SZ = 256;
+        var tex = new Texture2D(SZ, SZ, TextureFormat.RGBA32, false);
+        for (int y = 0; y < SZ; y++)
+            for (int x = 0; x < SZ; x++)
+            {
+                float dx = (x / (float)SZ - 0.5f) * 2f;
+                float dy = (y / (float)SZ - 0.5f) * 2f;
+                float d = Mathf.Sqrt(dx * dx + dy * dy);
+                float a = Mathf.Clamp01((d - 0.45f) / 0.55f);
+                tex.SetPixel(x, y, new Color(1f, 1f, 1f, a * a));
+            }
+        tex.Apply();
+        vignette = UnityEngine.Sprite.Create(tex, new Rect(0, 0, SZ, SZ), new Vector2(0.5f, 0.5f));
+        return vignette;
     }
 }
