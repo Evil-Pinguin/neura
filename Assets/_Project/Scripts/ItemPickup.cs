@@ -10,7 +10,9 @@ public class ItemPickup : MonoBehaviour
         if (picked) return;
         picked = true;
         InventorySystem.Instance.AddItem(item);
-        if (item != null) JournalSystem.TryUnlock("pickup_" + item.name);
+        if (item == null) return;
+        JournalSystem.TryUnlock("pickup_" + item.name);
+        JournalSystem.Notify("Взято: " + item.displayName);
         gameObject.SetActive(false); // предмет исчез из мира
     }
 }

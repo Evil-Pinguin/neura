@@ -9,6 +9,8 @@ public class CameraShake : MonoBehaviour
     float baseFov;
     Vector3 basePos;
 
+    public Vector3 CurrentOffset { get; private set; } // текущее смещение для HeadBob
+
     void Awake()
     {
         basePos = transform.localPosition;

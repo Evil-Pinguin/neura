@@ -107,6 +107,7 @@ public class InventorySystem : MonoBehaviour
         realm = r;
         selectedSlot = -1;
         if (open) { ApplySkin(); Refresh(); }
+        if (QuickBar.Instance != null) QuickBar.Instance.Refresh();
     }
 
     public void AddItem(ItemAsset item)
