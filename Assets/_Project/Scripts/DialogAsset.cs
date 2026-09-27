@@ -7,6 +7,7 @@ public class DialogLine
     [TextArea(3, 6)] public string text;
     public DialogChoice[] choices;
     public bool endAfterLine; // разговор закончится после этой реплики
+    public string emotion; // ключ эмоции Кима: smile/laugh/sad/serious/smirk/surprised/wink (пусто = без смены)
 }
 
 [System.Serializable]

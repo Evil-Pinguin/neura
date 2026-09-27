@@ -91,6 +91,8 @@ public class DialogRunner : MonoBehaviour
         lineEnds = line.endAfterLine;
         speakerLabel.text = line.speaker;
         textLabel.text = "";
+        DialogPortrait.Instance?.ShowForLine(line.speaker, line.emotion);
+        StandeeEmotion.Instance?.OnDialogLine(line.speaker, line.emotion);
 
         if (typeRoutine != null) StopCoroutine(typeRoutine);
         typeRoutine = StartCoroutine(TypeLine(line.text));

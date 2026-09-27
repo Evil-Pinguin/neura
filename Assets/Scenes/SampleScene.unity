@@ -3728,6 +3728,7 @@ GameObject:
   m_Component:
   - component: {fileID: 876461191}
   - component: {fileID: 876461190}
+  - component: {fileID: 1814110577}
   m_Layer: 0
   m_Name: DialogSystem
   m_TagString: Untagged
@@ -24647,6 +24648,8 @@ GameObject:
   - component: {fileID: 798270005}
   - component: {fileID: 732217384}
   - component: {fileID: 2083795100}
+  - component: {fileID: 1896999129}
+  - component: {fileID: 749855434}
   m_Layer: 0
   m_Name: KimStandee
   m_TagString: Untagged
@@ -24662,7 +24665,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 438238323}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.97, y: 0.85, z: 0.81}
+  m_LocalPosition: {x: -1.97, y: 0.85, z: 1.03}
   m_LocalScale: {x: 0.4914, y: 1.7, z: 0.04}
   m_Children: []
   m_Father: {fileID: 0}
@@ -24761,3 +24764,88 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       m_Version: 2
+--- !u!114 &1896999129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438238323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7bce743c29c41f5b7b66d37e4c1e4ac, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+--- !u!114 &749855434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438238323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93a3bdc964af4077aed05daabce15140, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  emotionKeys:
+  - smile
+  - laugh
+  - sad
+  - serious
+  - smirk
+  - surprised
+  - wink
+  - papers
+  emotionTextures:
+  - {fileID: 2800000, guid: 90b195a53a824d1582dc212a3bda094f, type: 3}
+  - {fileID: 2800000, guid: d0f7ccf68b1345fba8c0d98aabd50606, type: 3}
+  - {fileID: 2800000, guid: aaac8266fbae4be989e50a85d484080d, type: 3}
+  - {fileID: 2800000, guid: d3bdab4daf6e4305822f50bb80063539, type: 3}
+  - {fileID: 2800000, guid: 104bc5a668334e63a57537d7f80ad670, type: 3}
+  - {fileID: 2800000, guid: e902bce0b4a9475a9d324a6723d03acf, type: 3}
+  - {fileID: 2800000, guid: 986fb1cf3ee247c799985e76fe9cbc6b, type: 3}
+  - {fileID: 2800000, guid: d791257c25e5422e9b2054e217c14a13, type: 3}
+  blinkKeys:
+  - smile
+  - papers
+  blinkClosed:
+  - {fileID: 2800000, guid: 3444fd70c30e4258bef60abb74283e23, type: 3}
+  - {fileID: 2800000, guid: 0343b5385d5f4fd685c10c6efabbb2dd, type: 3}
+  defaultEmotion: papers
+  kimSpeaker: "\u041A\u0438\u043C"
+  standHeight: 1.7
+  revertDelay: 1.2
+  blinkInterval: {x: 2.5, y: 5}
+  blinkDuration: 0.12
+--- !u!114 &1814110577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 876461189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3d75330f644914ae6c559b14206d90, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  portraitSpeaker: "\u041A\u0438\u043C"
+  emotionKeys:
+  - smile
+  - laugh
+  - sad
+  - serious
+  - smirk
+  - surprised
+  - wink
+  emotionTextures:
+  - {fileID: 2800000, guid: 095a3a5e10c2491a80ed4cfd870ae0d7, type: 3}
+  - {fileID: 2800000, guid: 45d2dea7041345a0984410a43ae90f84, type: 3}
+  - {fileID: 2800000, guid: f8ce8804f23342618fc2623776ff3ec0, type: 3}
+  - {fileID: 2800000, guid: 7790f52c2cd042a7a09aa2615cef132e, type: 3}
+  - {fileID: 2800000, guid: 221a5bfbec124e9593d809acd1ca9dba, type: 3}
+  - {fileID: 2800000, guid: a47c2c902e9c4df49abcf3f3b86eedaa, type: 3}
+  - {fileID: 2800000, guid: 3165e41203c048c685ccb32f0e1cfc89, type: 3}
+  portraitHeight: 340
+  anchoredPos: {x: 36, y: 30}
