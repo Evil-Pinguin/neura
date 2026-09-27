@@ -41,6 +41,7 @@ public class CameraShake : MonoBehaviour
 
         if (trauma <= 0f)
         {
+            CurrentOffset = Vector3.zero;
             transform.localPosition = basePos;
             return;
         }
@@ -53,6 +54,7 @@ public class CameraShake : MonoBehaviour
             (Mathf.PerlinNoise(0f, Time.time * 30f) - 0.5f) * 0.3f,
             0f) * s;
 
+        CurrentOffset = offset;
         transform.localPosition = basePos + offset;
         GetComponent<Camera>().fieldOfView = baseFov + fovKick * s;
     }

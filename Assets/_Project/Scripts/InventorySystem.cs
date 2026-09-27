@@ -41,6 +41,9 @@ public class InventorySystem : MonoBehaviour
 
     readonly List<ItemAsset> items = new List<ItemAsset>();
     ItemRealm realm = ItemRealm.Reality;
+
+    public IReadOnlyList<ItemAsset> Items => items;
+    public ItemRealm CurrentRealm => realm;
     bool open;
     int selectedSlot = -1;
     float flickerTimer;
@@ -116,6 +119,7 @@ public class InventorySystem : MonoBehaviour
         items.Add(item);
         Debug.Log("Взято: " + item.displayName);
         if (open) Refresh();
+        if (QuickBar.Instance != null) QuickBar.Instance.Refresh();
     }
 
     public bool Has(ItemAsset item) => items.Contains(item);
