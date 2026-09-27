@@ -10,6 +10,7 @@ public class CameraShake : MonoBehaviour
     Vector3 basePos;
 
     public Vector3 CurrentOffset { get; private set; } // текущее смещение для HeadBob
+    public static float SyndromeTremor; // базовый тремор от синдрома (глушится седацией)
 
     void Awake()
     {
@@ -39,15 +40,16 @@ public class CameraShake : MonoBehaviour
     {
         if (sedated > 0f) sedated -= Time.deltaTime;
 
-        if (trauma <= 0f)
+        trauma = Mathf.Max(0f, trauma - Time.deltaTime * 0.45f);
+        float eff = Mathf.Max(trauma, sedated > 0f ? 0f : SyndromeTremor);
+        if (eff <= 0f)
         {
             CurrentOffset = Vector3.zero;
             transform.localPosition = basePos;
             return;
         }
 
-        trauma = Mathf.Max(0f, trauma - Time.deltaTime * 0.45f);
-        float s = trauma * trauma;
+        float s = eff * eff;
 
         Vector3 offset = new Vector3(
             (Mathf.PerlinNoise(Time.time * 30f, 0f) - 0.5f) * 0.3f,

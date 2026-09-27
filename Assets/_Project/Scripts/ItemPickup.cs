@@ -13,6 +13,7 @@ public class ItemPickup : MonoBehaviour
         if (item == null) return;
         JournalSystem.TryUnlock("pickup_" + item.name);
         JournalSystem.Notify("Взято: " + item.displayName);
+        SyndromeVoice.OnPickup(item.displayName);
         gameObject.SetActive(false); // предмет исчез из мира
     }
 }

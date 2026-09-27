@@ -136,6 +136,7 @@ public class MemoryDive : MonoBehaviour
             JournalSystem.Unlock("dive_first");
         }
         Debug.Log("ГЛУБОКОЕ ПОГРУЖЕНИЕ: пространство памяти Уилла.");
+        SyndromeVoice.OnDive();
 
         yield return Fade(1f, 0f, fadeTime + 0.3f);
 
@@ -159,6 +160,8 @@ public class MemoryDive : MonoBehaviour
         IsInMemory = false;
         if (InventorySystem.Instance != null) InventorySystem.Instance.SetRealm(ItemRealm.Reality);
         JournalSystem.Unlock("dive_return");
+        Syndrome.OnDiveSurfaced();
+        SyndromeVoice.OnSurface();
         Debug.Log("Возвращение из воспоминания.");
 
         yield return Fade(1f, 0f, fadeTime + 0.3f);

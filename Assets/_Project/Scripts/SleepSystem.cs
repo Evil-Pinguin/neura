@@ -18,6 +18,7 @@ public class SleepSystem : MonoBehaviour
     UnityEngine.UI.Image fadeImage;
 
     Vector3 savedPos;
+    string dreamVariant = "dream_house";
     float savedYaw;
     bool transitioning;
 
@@ -96,8 +97,12 @@ public class SleepSystem : MonoBehaviour
         Teleport(spawn.position, spawn.eulerAngles.y);
         IsDreaming = true;
         if (InventorySystem.Instance != null) InventorySystem.Instance.SetRealm(ItemRealm.Memory);
-        JournalSystem.Unlock("dream_house");
-        Debug.Log("Сон: старый деревянный дом.");
+        dreamVariant = "dream_house";
+        if (GameFlags.CalibrationRefused && !JournalSystem.Has("dream_static")) dreamVariant = "dream_static";
+        else if (GameFlags.FirstDiveDone && !JournalSystem.Has("dream_depths")) dreamVariant = "dream_depths";
+        JournalSystem.Unlock(dreamVariant);
+        SyndromeVoice.OnSleep();
+        Debug.Log("Сон: " + dreamVariant + ".");
 
         yield return Fade(1f, 0f, fadeTime);
 
@@ -121,6 +126,7 @@ public class SleepSystem : MonoBehaviour
         IsDreaming = false;
         if (InventorySystem.Instance != null) InventorySystem.Instance.SetRealm(ItemRealm.Reality);
         Debug.Log("Майк проснулся на диване.");
+        SyndromeVoice.OnWake();
 
         yield return Fade(1f, 0f, fadeTime);
 
@@ -203,10 +209,13 @@ public class SleepSystem : MonoBehaviour
     void ApplyDreamEnv()
     {
         Color nightBg = new Color(0.005f, 0.008f, 0.016f);
+        float density = 0.045f;
+        if (dreamVariant == "dream_depths") { nightBg = new Color(0.01f, 0.03f, 0.02f); density = 0.06f; }
+        else if (dreamVariant == "dream_static") { nightBg = new Color(0.03f, 0.01f, 0.02f); density = 0.075f; }
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.Exponential;
         RenderSettings.fogColor = nightBg;
-        RenderSettings.fogDensity = 0.045f;
+        RenderSettings.fogDensity = density;
         RenderSettings.ambientIntensity = 0.15f;
         if (dirLight != null)
         {

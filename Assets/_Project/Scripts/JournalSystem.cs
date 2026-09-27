@@ -137,6 +137,7 @@ public class JournalSystem : MonoBehaviour
         }
         unlockedIds.Add(id);
         unlockOrder.Add(id);
+        Achievements.OnJournal(id);
         if (selected < 0) selected = 0;
         Debug.Log("Архивировано: " + e.title);
         if (open) Refresh();

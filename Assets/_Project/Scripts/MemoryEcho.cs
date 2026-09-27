@@ -20,6 +20,7 @@ public class MemoryEcho : MonoBehaviour
         if (used) return;
         used = true;
         JournalSystem.Unlock(echoId);
+        SyndromeVoice.OnEcho();
         var shake = FindObjectOfType<CameraShake>();
         if (shake != null) shake.Shake(0.45f);
         var inter = GetComponent<Interactable>();

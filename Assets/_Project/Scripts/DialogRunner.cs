@@ -63,6 +63,7 @@ public class DialogRunner : MonoBehaviour
         HideChoices();
         DialogPortrait.Instance?.Hide();
         StandeeEmotion.Instance?.OnDialogClosed();
+        KimVoice.Stop();
         playerController.enabled = true;
         playerInteraction.enabled = true;
         Cursor.lockState = CursorLockMode.Locked;
@@ -95,6 +96,7 @@ public class DialogRunner : MonoBehaviour
         textLabel.text = "";
         DialogPortrait.Instance?.ShowForLine(line.speaker, line.emotion);
         StandeeEmotion.Instance?.OnDialogLine(line.speaker, line.emotion);
+        KimVoice.PlayFor(asset.name, index, line.speaker);
 
         if (typeRoutine != null) StopCoroutine(typeRoutine);
         typeRoutine = StartCoroutine(TypeLine(line.text));
@@ -175,6 +177,8 @@ public class DialogRunner : MonoBehaviour
             case ChoiceEffect.AcceptCalibration:
                 GameFlags.CalibrationAccepted = true;
                 JournalSystem.Unlock("calibration_yes");
+                Syndrome.Reset();
+                SyndromeVoice.OnCalibrated();
                 StartCoroutine(CalibrationCalm());
                 Debug.Log("ВЫБОР: калибровка принята. Симптомы подавлены на 90 секунд.");
                 break;
