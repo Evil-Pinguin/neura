@@ -14,6 +14,7 @@ public class ItemPickup : MonoBehaviour
         JournalSystem.TryUnlock("pickup_" + item.name);
         JournalSystem.Notify("Взято: " + item.displayName);
         SyndromeVoice.OnPickup(item.displayName);
+        QuestLog.OnItemPicked(item);
         gameObject.SetActive(false); // предмет исчез из мира
     }
 }

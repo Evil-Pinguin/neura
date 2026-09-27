@@ -117,6 +117,9 @@ public class MemoryDive : MonoBehaviour
         savedPos = playerController.transform.position;
         savedYaw = playerController.transform.eulerAngles.y;
 
+        if (!GameFlags.FirstDiveDone && CutsceneDirector.Instance != null)
+            yield return StartCoroutine(CutsceneDirector.Instance.PlayRoutine(CutsceneDirector.DiveShots()));
+
         if (playerController != null) playerController.enabled = false;
         if (playerInteraction != null) playerInteraction.enabled = false;
         fadeImage.transform.SetAsLastSibling();

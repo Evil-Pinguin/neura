@@ -36,6 +36,7 @@ public class JournalSystem : MonoBehaviour
 
     bool open;
     int selected = -1;
+    bool questsTab;
     bool detailShown;
     float corruptTimer;
 
@@ -49,6 +50,8 @@ public class JournalSystem : MonoBehaviour
     TextMeshProUGUI metaLabel;
     TextMeshProUGUI bodyLabel;
     Button detailButton;
+    Button reportsTabBtn;
+    Button questsTabBtn;
     CanvasGroup toastGroup;
     TextMeshProUGUI toastLabel;
     TMP_FontAsset templateFont;
@@ -203,6 +206,7 @@ public class JournalSystem : MonoBehaviour
         TickToast();
 
         // повреждённые записи мерцают, пока их читают
+        if (questsTab) return;
         var list = CurrentList();
         if (selected >= 0 && selected < list.Count && list[selected].corruption > 0f)
         {
@@ -248,6 +252,8 @@ public class JournalSystem : MonoBehaviour
 
     void Refresh()
     {
+        PaintTabs();
+        if (questsTab) { RefreshQuests(); return; }
         var list = CurrentList();
         if (selected < 0 && list.Count > 0) selected = 0;
         if (selected >= list.Count) selected = list.Count - 1;
@@ -276,6 +282,118 @@ public class JournalSystem : MonoBehaviour
             bodyLabel.text = "Нет записей.";
             detailButton.gameObject.SetActive(false);
         }
+    }
+
+    // ---------- вкладка задач ----------
+
+    Button MakeTab(Transform parent, string label, float x0, UnityEngine.Events.UnityAction onClick)
+    {
+        var go = new GameObject("Tab_" + label);
+        MakeRT(go, parent,
+            new Vector2(x0, 0), new Vector2(x0 + 0.5f, 1), new Vector2(2, 2), new Vector2(-2, -2));
+        var img = go.AddComponent<Image>();
+        img.color = RowColor;
+        var btn = go.AddComponent<Button>();
+        btn.targetGraphic = img;
+        btn.navigation = new Navigation { mode = Navigation.Mode.None };
+        var tmp = MakeLabel("Label", go.transform,
+            Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero,
+            19, TextAlignmentOptions.Center, new Color(0.55f, 0.90f, 1f), false, false);
+        tmp.text = label;
+        btn.onClick.AddListener(onClick);
+        return btn;
+    }
+
+    void SwitchTab(bool quests)
+    {
+        questsTab = quests;
+        selected = 0;
+        detailShown = false;
+        PaintTabs();
+        Refresh();
+    }
+
+    void PaintTabs()
+    {
+        if (reportsTabBtn != null) reportsTabBtn.targetGraphic.color = questsTab ? RowColor : SelColor;
+        if (questsTabBtn != null) questsTabBtn.targetGraphic.color = questsTab ? SelColor : RowColor;
+    }
+
+    void RefreshQuests()
+    {
+        for (int i = listContent.childCount - 1; i >= 0; i--)
+            Destroy(listContent.GetChild(i).gameObject);
+
+        var all = QuestLog.All;
+        if (selected < 0 && all.Length > 0) selected = 0;
+        if (selected >= all.Length) selected = all.Length - 1;
+
+        for (int i = 0; i < all.Length; i++)
+            BuildQuestRow(all[i], i == selected, i);
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(listContent);
+        listScroll.verticalNormalizedPosition = 1f;
+
+        headerLabel.text = "МОИ ЗАДАЧИ  •  " + QuestLog.DoneCount() + "/" + all.Length;
+
+        if (selected >= 0 && selected < all.Length)
+        {
+            var q = all[selected];
+            bool done = q.done != null && q.done();
+            titleLabel.text = q.title;
+            titleLabel.color = done ? new Color(0.5f, 0.9f, 0.55f) : new Color(0.55f, 0.90f, 1f);
+            metaLabel.text = done ? "выполнено" : "активна";
+            string t = q.hint;
+            if (q.extra != null)
+            {
+                string ex = q.extra();
+                if (!string.IsNullOrEmpty(ex)) t += "\n\n" + ex;
+            }
+            bodyLabel.text = t;
+        }
+        else
+        {
+            titleLabel.text = "—";
+            metaLabel.text = "";
+            bodyLabel.text = "Нет задач.";
+        }
+        detailButton.gameObject.SetActive(false);
+        corruptTimer = 0f;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(bodyContent);
+        bodyScroll.verticalNormalizedPosition = 1f;
+    }
+
+    void BuildQuestRow(QuestLog.Quest q, bool isSelected, int idx)
+    {
+        var go = new GameObject("QRow_" + idx);
+        MakeRT(go, listContent, new Vector2(0, 1), new Vector2(1, 1), Vector2.zero, Vector2.zero);
+
+        var le = go.AddComponent<LayoutElement>();
+        le.preferredHeight = 54f;
+        le.flexibleWidth = 1f;
+
+        var img = go.AddComponent<Image>();
+        var btn = go.AddComponent<Button>();
+        btn.targetGraphic = img;
+        btn.navigation = new Navigation { mode = Navigation.Mode.None };
+        img.color = isSelected ? SelColor : RowColor;
+
+        bool done = q.done != null && q.done();
+        int captured = idx;
+        btn.onClick.AddListener(() => SelectQuest(captured));
+
+        var tmp = MakeLabel("Label", go.transform,
+            Vector2.zero, Vector2.one, new Vector2(12, 4), new Vector2(-12, -4),
+            19, TextAlignmentOptions.Left, done ? new Color(0.5f, 0.9f, 0.55f) : DimColor, false, false);
+        tmp.overflowMode = TextOverflowModes.Ellipsis;
+        tmp.text = (done ? "✓ " : "○ ") + q.title;
+    }
+
+    void SelectQuest(int i)
+    {
+        selected = i;
+        detailShown = false;
+        Refresh();
     }
 
     void BuildRow(JournalEntry e, bool isSelected, bool isUnread)
@@ -330,7 +448,7 @@ public class JournalSystem : MonoBehaviour
 
     public void ShowDetail()
     {
-        if (!open) return;
+        if (!open || questsTab) return;
         var list = CurrentList();
         if (selected < 0 || selected >= list.Count) return;
         var e = list[selected];
@@ -354,10 +472,10 @@ public class JournalSystem : MonoBehaviour
 
     void MoveSelection(int dir)
     {
-        var list = CurrentList();
-        if (list.Count == 0) return;
+        int count = questsTab ? QuestLog.All.Length : CurrentList().Count;
+        if (count == 0) return;
         if (selected < 0) selected = 0;
-        else selected = (selected + dir + list.Count) % list.Count;
+        else selected = (selected + dir + count) % count;
         detailShown = false;
         Refresh();
     }
@@ -454,10 +572,16 @@ public class JournalSystem : MonoBehaviour
             16, TextAlignmentOptions.Right, DimColor, false, false);
         closeHint.text = "[J] / [Esc] — закрыть";
 
+        var tabsObj = new GameObject("Tabs");
+        MakeRT(tabsObj, root.transform,
+            new Vector2(0, 1), new Vector2(1, 1), new Vector2(24, -106), new Vector2(-24, -66));
+        reportsTabBtn = MakeTab(tabsObj.transform, "Отчёты", 0f, () => SwitchTab(false));
+        questsTabBtn = MakeTab(tabsObj.transform, "Задачи", 0.5f, () => SwitchTab(true));
+
         // список слева
         var listObj = new GameObject("EntryList");
         MakeRT(listObj, root.transform,
-            new Vector2(0, 0), new Vector2(0, 1), new Vector2(24, 56), new Vector2(320, -64));
+            new Vector2(0, 0), new Vector2(0, 1), new Vector2(24, 56), new Vector2(320, -112));
         var listBg = listObj.AddComponent<Image>();
         listBg.color = new Color(0.04f, 0.06f, 0.09f, 1f);
         MakeScroll(listObj, out listScroll, out listContent);
@@ -474,7 +598,7 @@ public class JournalSystem : MonoBehaviour
         // текст справа
         var right = new GameObject("Detail");
         MakeRT(right, root.transform,
-            new Vector2(0, 0), new Vector2(1, 1), new Vector2(344, 56), new Vector2(-24, -64));
+            new Vector2(0, 0), new Vector2(1, 1), new Vector2(344, 56), new Vector2(-24, -112));
 
         titleLabel = MakeLabel("DetailTitle", right.transform,
             new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -40), new Vector2(0, -4),

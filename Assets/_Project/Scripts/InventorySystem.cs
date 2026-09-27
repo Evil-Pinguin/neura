@@ -124,6 +124,14 @@ public class InventorySystem : MonoBehaviour
 
     public bool Has(ItemAsset item) => items.Contains(item);
 
+    public void RemoveItem(ItemAsset item)
+    {
+        if (item == null || !items.Remove(item)) return;
+        Debug.Log("Убрано: " + item.displayName);
+        if (open) Refresh();
+        if (QuickBar.Instance != null) QuickBar.Instance.Refresh();
+    }
+
     void TryOpen()
     {
         // не открываемся поверх диалога, консоли и дневника
